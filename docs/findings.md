@@ -173,3 +173,31 @@ The available data does not establish the causes of these inconsistencies.
 ## 3. Limitations
 
 [Document any assumptions or limitations of the dataset and validation process.]
+
+### Analysis 01: Late Delivery Rate
+
+**Objective:** Determine the percentage of eligible orders delivered after their estimated delivery dates.
+
+**Eligibility Criteria:**
+- Order status must be `delivered`.
+- Actual customer delivery timestamp must not be NULL.
+- Estimated delivery timestamp must not be NULL.
+- Compare calendar dates rather than full timestamps.
+
+**Results:**
+
+| Metric | Value |
+|---|---:|
+| Eligible delivered orders | 96,470 |
+| Late deliveries | 6,534 |
+| On-time deliveries | 89,936 |
+| Late delivery rate | 6.77% |
+| On-time delivery rate | 93.23% |
+
+**Interpretation:**
+
+Approximately 6.77% of eligible delivered orders arrived after their estimated delivery dates, while 93.23% arrived on or before the estimated dates.
+
+**Limitations:**
+
+The analysis excludes orders without sufficient delivery information and does not measure undelivered or canceled orders. It also does not establish the reasons for late deliveries.
