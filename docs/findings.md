@@ -12,12 +12,12 @@
 
 | Table | Total Records |
 |---|---:|
-| customers | [Enter actual count] |
-| orders | [Enter actual count] |
+| customers | [99441] |
+| orders | [99441] |
 
 **Interpretation:**
 
-[Explain whether the counts match the original CSV files.]
+[The count matches the original csv files]
 
 ---
 
@@ -27,13 +27,13 @@
 
 **Results:**
 
-- Total orders: [Enter count]
-- Orders with delivery timestamps: [Enter count]
-- Orders without delivery timestamps: [Enter count]
+- Total orders: [99441]
+- Orders with delivery timestamps: [96476]
+- Orders without delivery timestamps: [2965]
 
 **Interpretation:**
 
-[Explain what missing delivery timestamps could mean.]
+[This means that there are 2965 deliveries that were not completed]
 
 ---
 
@@ -43,11 +43,11 @@
 
 **Results:**
 
-- Orphan orders: [Enter count]
+- Orphan orders: [0]
 
 **Interpretation:**
 
-[Explain what the result means about the relationship between orders and customers.]
+[Nothing was found]
 
 ---
 
@@ -57,13 +57,114 @@
 
 **Results:**
 
-[Insert a Markdown table with the actual order statuses and counts returned by your SQL query.]
+"shipped"	1107
+"unavailable"	609
+"invoiced"	314
+"created"	5
+"approved"	2
+"delivered"	8
+"processing"	301
+"canceled"	619
+
+Results: 2,965 orders (approximately 2.98% of all orders) have missing customer delivery timestamps.
 
 **Interpretation:**
 
-[Discuss whether missing timestamps are expected for canceled, shipped, or unavailable orders. Investigate any delivered orders with missing timestamps.]
+Shipped: 1,107 orders (1.11% of all orders) have no recorded customer delivery timestamp. These orders may have been in transit when the data was captured. Further investigation is needed before classifying them as delayed or failed deliveries.
+
+Canceled and unavailable: Missing delivery timestamps are generally consistent with these order statuses.
+
+Delivered: Eight orders are marked as delivered despite having no recorded delivery timestamp. These are potential data-quality inconsistencies requiring further investigation.
+
+Conclusion: Most missing delivery timestamps may be explained by order status. However, the eight delivered orders without timestamps warrant investigation, especially because delivery timestamps will be used to calculate shipment delays.
+
+### Check 05: Delivered Orders with Missing Delivery Timestamps
+
+**Objective:** Identify orders marked as delivered without a recorded customer delivery timestamp.
+
+**Results:**
+
+Eight orders have `order_status = 'delivered'` but contain NULL values in `order_delivered_customer_date`.
+
+All eight records contain valid purchase and estimated delivery timestamps.
+
+**Interpretation:**
+
+These records represent potential data-quality inconsistencies because their delivery status indicates completion, but their actual delivery dates are missing.
+
+Without actual delivery timestamps, it is impossible to determine whether these orders were delivered on time or late.
+
+**Decision:**
+
+Exclude these eight records from delivery-delay calculations that require an actual delivery timestamp. Preserve the original records and document their exclusion to maintain transparency and reproducibility.
 
 ---
+
+### Check 06: Delivery Timestamp Chronological Validation
+
+**Objective:** Identify delivered orders with actual delivery timestamps earlier than their purchase timestamps.
+
+**Results:** Zero records met this condition.
+
+**Interpretation:** No chronological inconsistencies were detected among orders marked as delivered that have recorded delivery timestamps.
+
+**Limitation:** This check does not evaluate orders with other statuses or missing delivery timestamps. It also does not validate other chronological relationships, such as whether an order was approved before it was shipped.
+
+### Check 07: Carrier Handoff Before Order Approval
+
+**Objective:** Identify orders where the recorded carrier handoff occurred before order approval.
+
+**Results:**
+
+- 1,359 orders (approximately 1.37% of all orders) have carrier timestamps earlier than approval timestamps.
+- The largest observed discrepancy is 171 days, 5 hours, 15 minutes, and 22 seconds.
+- One record shows a carrier handoff in January 2018 despite the order being purchased in July 2018.
+- Several other records show approval timestamps recorded after customer delivery.
+
+**Interpretation:**
+
+These records contain unexpected chronological sequences that may indicate timestamp-recording errors, delayed system updates, or other data inconsistencies. The exact causes have not been established.
+
+**Decision:**
+
+Retain the records in the original dataset. Flag anomalous timestamps for further investigation, and avoid relying on potentially invalid carrier or approval timestamps without additional validation.
+
+The anomalies do not automatically invalidate delivery-delay calculations based on actual and estimated customer delivery dates.
+
+### Check 07: Carrier Handoff Before Order Approval
+
+**Objective:** Identify and measure chronological inconsistencies where an order's recorded carrier handoff occurred before approval.
+
+**Results:**
+
+| Metric | Value |
+|---|---:|
+| Affected orders | 1,359 |
+| Percentage of all orders | 1.37% |
+| Mean gap | 24.75 hours |
+| Median gap | 17.17 hours |
+| Minimum gap | 21 seconds |
+| Maximum gap | 4,109.26 hours (171.2 days) |
+
+**Interpretation:**
+
+A total of 1,359 orders have carrier handoff timestamps earlier than their approval timestamps.
+
+The mean gap of 24.75 hours exceeds the median of 17.17 hours, suggesting that larger discrepancies influence the average.
+
+One particularly unusual record has a carrier handoff timestamp approximately 171 days before its recorded approval and purchase dates.
+
+These inconsistencies may reflect timestamp-recording errors, delayed system updates, or other operational factors. Their underlying causes remain unverified.
+
+**Data Handling Decision:**
+
+Retain the original records and document these chronological anomalies.
+
+Because the primary shipment-delay analysis uses actual and estimated customer delivery timestamps, these approval-to-carrier discrepancies do not automatically require excluding the affected orders.
+
+**Limitation:**
+
+The available data does not establish the causes of these inconsistencies.
 
 ## 2. Data Quality Observations
 
