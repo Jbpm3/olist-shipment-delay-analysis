@@ -201,3 +201,34 @@ Approximately 6.77% of eligible delivered orders arrived after their estimated d
 **Limitations:**
 
 The analysis excludes orders without sufficient delivery information and does not measure undelivered or canceled orders. It also does not establish the reasons for late deliveries.
+
+### Analysis 02: Delivery Delay Duration
+
+**Objective:** Measure how many calendar days late orders arrived compared with their estimated delivery dates.
+
+**Methodology:**
+
+- Include only orders marked as `delivered`.
+- Exclude records with missing actual or estimated delivery timestamps.
+- Calculate delay days by subtracting the estimated delivery calendar date from the actual delivery calendar date.
+- Include only orders with positive delay days when calculating delay-duration statistics.
+
+**Results:**
+
+| Metric | Value |
+|---|---:|
+| Late orders | 6,534 |
+| Average delay | 10.62 days |
+| Median delay | 7 days |
+| Minimum delay | 1 day |
+| Maximum delay | 188 days |
+
+**Interpretation:**
+
+Among the 6,534 orders classified as late, the average delay was 10.62 calendar days, while the median was 7 days.
+
+The mean exceeding the median suggests that longer delays influence the average. The maximum observed delay was 188 days.
+
+**Limitations:**
+
+These statistics describe only late deliveries, not all orders. The analysis measures delays against estimated delivery dates and does not establish the causes of those delays.

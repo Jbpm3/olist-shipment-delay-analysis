@@ -19,4 +19,26 @@ SELECT
 FROM delivery_status;
 	
 
-    
+-- Analysis 02: Delivery Delay Duration
+-- Purpose: Measure how many days late delayed orders arrived.
+
+WITH delivery_delays AS (
+    SELECT
+        order_id,
+        (order_delivered_customer_date::DATE - order_estimated_delivery_date::DATE)
+		AS delay_days
+    FROM orders
+    WHERE
+        order_status = 'delivered'
+			AND order_delivered_customer_date IS NOT NULL
+			AND order_estimated_delivery_date IS NOT NULL
+)
+SELECT
+    COUNT(*) AS late_orders,
+	ROUND(AVG(delay_days),2) AS avg_delay_days,
+	PERCENTILE_CONT(0.5)
+		WITHIN GROUP (ORDER BY delay_days) AS median_delay_days,
+	MIN(delay_days) AS min_delay_days,
+	MAX(delay_days) AS max_delay_days
+FROM delivery_delays
+WHERE delay_days > 0;
