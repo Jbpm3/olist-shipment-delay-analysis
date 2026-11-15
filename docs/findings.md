@@ -232,3 +232,40 @@ The mean exceeding the median suggests that longer delays influence the average.
 **Limitations:**
 
 These statistics describe only late deliveries, not all orders. The analysis measures delays against estimated delivery dates and does not establish the causes of those delays.
+
+### Analysis 03: Regional Delivery Performance
+
+**Objective:** Compare late-delivery rates across Brazilian customer states.
+
+**Methodology:**
+
+- Join `orders` and `customers` using `customer_id`.
+- Include only delivered orders with valid actual and estimated delivery timestamps.
+- Classify an order as late when its actual delivery calendar date exceeds the estimated delivery calendar date.
+- Group eligible orders by `customer_state`.
+- Calculate eligible order counts, late order counts, and late-delivery percentages.
+
+**Validation:**
+
+- Total eligible orders across 27 states: 96,470
+- Total late orders across 27 states: 6,534
+- Both totals match the overall delivery-performance analysis.
+
+**Key Findings:**
+
+1. **Alagoas (AL)** had the highest observed late-delivery rate at 21.41%, with 85 late deliveries among 397 eligible orders.
+2. **Maranhão (MA)** recorded a 17.43% late-delivery rate, followed by Sergipe (SE) at 15.22%.
+3. **Rio de Janeiro (RJ)** recorded a late-delivery rate of 12.11% across 12,350 eligible orders.
+4. **São Paulo (SP)** recorded a substantially lower late-delivery rate of 4.49% across 40,494 eligible orders, although it had more late deliveries in absolute terms.
+
+**Interpretation:**
+
+Late-delivery rates varied considerably across customer states. Rio de Janeiro's rate was approximately 2.7 times that of São Paulo, despite both states having substantial order volumes.
+
+These regional differences warrant further investigation but do not establish the causes of delivery delays.
+
+**Limitations:**
+
+- Smaller state-level samples can produce less stable estimates.
+- The analysis uses customer location rather than seller origin or shipping routes.
+- Differences may be influenced by seller locations, transportation infrastructure, estimated delivery policies, order characteristics, and other factors not controlled for in this analysis.
