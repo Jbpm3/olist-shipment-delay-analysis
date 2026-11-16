@@ -269,3 +269,71 @@ These regional differences warrant further investigation but do not establish th
 - Smaller state-level samples can produce less stable estimates.
 - The analysis uses customer location rather than seller origin or shipping routes.
 - Differences may be influenced by seller locations, transportation infrastructure, estimated delivery policies, order characteristics, and other factors not controlled for in this analysis.
+
+### Analysis 04 — Monthly Delivery Trends
+
+**Objective:** Analyze how late-delivery performance varied by order purchase month.
+
+**Methodology:**
+- Included delivered orders with non-null actual and estimated delivery timestamps.
+- Grouped eligible orders by purchase month using PostgreSQL's `DATE_TRUNC()`.
+- Classified an order as late when its actual delivery calendar date exceeded its estimated delivery calendar date.
+- Calculated monthly late-delivery rates using conditional aggregation.
+
+**Results:**
+- Analyzed 96,470 eligible orders, including 6,534 late deliveries, across 23 purchase months.
+- March 2018 recorded an 18.96% late-delivery rate (1,328 of 7,003 orders).
+- February 2018 recorded a 14.13% late-delivery rate (926 of 6,555 orders).
+- November 2017 recorded a 12.40% late-delivery rate (904 of 7,288 orders).
+- These three months accounted for 48.33% of all late deliveries.
+- June 2018 recorded a comparatively low late-delivery rate of 1.16% (71 of 6,096 orders).
+
+**Interpretation:**
+
+Delivery performance varied substantially across purchase months, with notable increases in late deliveries during November 2017 and February–March 2018. The results identify periods worth investigating further but do not establish the causes of these changes.
+
+**Data-quality consideration:**
+
+Early months with extremely small sample sizes, such as September 2016 (one eligible order), should not be treated as reliable indicators of broader delivery performance.
+
+**Validation:**
+
+Monthly aggregates reconcile with the overall analysis: 96,470 eligible orders and 6,534 late deliveries.
+
+### Analysis 05 — Delivery Delay Distribution
+
+**Objective:** Examine the distribution of delivery delay durations among late orders.
+
+**Methodology:**
+- Included delivered orders with non-null actual and estimated delivery timestamps.
+- Calculated delay duration using the difference between actual and estimated delivery calendar dates.
+- Included only orders with positive delay durations.
+- Classified late orders into five mutually exclusive categories: 1–3, 4–7, 8–14, 15–30, and 31+ days.
+- Calculated order counts and category percentages using SQL aggregation and a window function.
+
+**Results:**
+
+| Delay Duration | Order Count | Percentage |
+|---|---:|---:|
+| 1–3 days | 1,870 | 28.62% |
+| 4–7 days | 1,802 | 27.58% |
+| 8–14 days | 1,478 | 22.62% |
+| 15–30 days | 1,039 | 15.90% |
+| 31+ days | 345 | 5.28% |
+| **Total** | **6,534** | **100.00%** |
+
+**Key Findings:**
+
+- 56.20% of late deliveries arrived within 7 calendar days after their estimated date.
+- 21.18% of late deliveries were delayed by at least 15 days.
+- 345 late orders experienced delays exceeding 30 days.
+
+**Interpretation:**
+
+The majority of late deliveries were concentrated within the shorter delay categories. However, a meaningful proportion experienced extended delays, potentially affecting customer experience.
+
+The analysis describes delay duration but does not establish the underlying causes.
+
+**Validation:**
+
+All five categories account for 6,534 late orders, matching the overall late-delivery count. Category percentages sum to 100.00%.
