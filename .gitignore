@@ -228,3 +228,6 @@ data/raw/
 !.env.example
 .venv
 __pycache__/
+
+# Local Codex context
+OLIST_CODEX_HANDOFF.md
