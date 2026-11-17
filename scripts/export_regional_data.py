@@ -31,14 +31,22 @@ database_url = URL.create(
 
 engine = create_engine(database_url)
 
+# function
+
+def load_sql_data(sql_file,engine):
+    # 1. Read the SQL file
+    
+    sql_query = sql_file.read_text(encoding="utf-8")
+    
+    # 2. Execute the SQL query using pandas
+    
+    df = pd.read_sql_query(sql_query,engine)
+    # 3. Return the resulting DataFrame
+    
+    return df
+
 sql_file = Path("sql/04_regional_analysis.sql")
-
-sql_query = sql_file.read_text(encoding="utf-8")
-
-df = pd.read_sql_query(sql_query,engine)
-
-print(df.head())
-print(len(df))
+df = load_sql_data(sql_file,engine)
 
 # validate extracted data
 
@@ -50,6 +58,7 @@ assert df["late_orders"].sum() == 6534,  "Expected 6534 total total late orders"
 
 # print statements
 
+print(f"Number of states: {len(df)}")
 print(f"Sum of total delivered orders: {df['total_delivered_orders'].sum():,}")
 print(f"Sum of late_orders: {df['late_orders'].sum():,}")
 
