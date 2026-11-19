@@ -67,3 +67,17 @@ print(f"Sum of late_orders: {df['late_orders'].sum():,}")
 df.to_csv(output_file, index=False)
 
 print(f"CSV exported successfully to: {output_file}")
+
+monthly_sql_file = Path("sql/05_monthly_trends.sql")
+
+monthly_df = load_sql_data(monthly_sql_file,engine)
+
+assert(len(monthly_df)) == 23, "Expected 23 months"
+
+assert(monthly_df["total_delivered_orders"].sum()) == 96470, "Expected 96,470 deliveries"
+
+assert(monthly_df["late_orders"].sum()) == 6534, "Expected 6,534 late deliveries"
+
+print(f"Number of months: {len(monthly_df)}")
+print(f"Total deliveries: {monthly_df['total_delivered_orders'].sum():,}")
+print(f"Total late deliveries: {monthly_df['late_orders'].sum():,}")
