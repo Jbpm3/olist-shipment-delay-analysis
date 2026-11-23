@@ -7,10 +7,18 @@ regional_file = Path(__file__).parent / "data" / "regional_delivery_metrics.csv"
 
 monthly_file = Path(__file__).parent / "data" / "monthly_delivery_metrics.csv"
 
+
+
 df = pd.read_csv(regional_file)
+    
 monthly_df = pd.read_csv(monthly_file)
 
 st.title("Olist Shipment Delay Analysis")
+
+st.caption(
+    "An exploratory analysis of delivery performance "
+    "across Brazillian e-commerce orders. "
+)
 
 # KPI
 total_deliveries = df["total_delivered_orders"].sum()
@@ -86,7 +94,8 @@ st.bar_chart(
 )
 
 
-st.dataframe(df)
+with st.expander("View Regional Data"):
+    st.dataframe(df)
 
 monthly_df["purchase_month"] = pd.to_datetime(
     monthly_df["purchase_month"]
@@ -113,5 +122,7 @@ st.caption(
     "from very small sample sizes."
 )
 
-st.dataframe(monthly_df)
+with st.expander("View Regional Data"):
+    st.dataframe(monthly_df)
+
 
